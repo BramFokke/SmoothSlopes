@@ -6,4 +6,4 @@ A better strict slopes mod for Cities: Skylines
 This mod does exactly the same, with two important new features:
 
   * The mod uses a config file to determine the maximum slope limits, so these values can be changed by the user.
-  * The user can hold <shift> to temporarily relax the slope limit for when the user is in a tight spot.
+  * The user can hold shift to temporarily relax the slope limit for when the user is in a tight spot.
