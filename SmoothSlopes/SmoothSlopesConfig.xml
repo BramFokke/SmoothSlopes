@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" DefaultMode="Strict" HoldKey="LeftShift">
+  <Networks>
+    <NetworkType Name="Small Road" StrictLimit="0.15" RelaxedLimit="0.3" />
+    <NetworkType Name="Medium Road" StrictLimit="0.1" RelaxedLimit="0.2" />
+    <NetworkType Name="Large Road" StrictLimit="0.1" RelaxedLimit="0.2" />
+    <NetworkType Name="Ramp" StrictLimit="0.15" RelaxedLimit="0.3" />
+    <NetworkType Name="Highway" StrictLimit="0.07" RelaxedLimit="0.14" />
+    <NetworkType Name="Train Track" StrictLimit="0.05" RelaxedLimit="0.1" />
+  </Networks>
+</Config>
