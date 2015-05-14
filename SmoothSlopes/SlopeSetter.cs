@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using ColossalFramework.Plugins;
@@ -71,7 +72,7 @@ namespace SmoothSlopes
         /// </summary>
         public void Apply()
         {
-            foreach(var collection in 
+            foreach (var collection in
                         UnityEngine
                         .Object
                         .FindObjectsOfType<NetCollection>())
@@ -80,7 +81,7 @@ namespace SmoothSlopes
                 {
                     var type = GetType(info);
                     var network = config.GetNetwork(type);
-                    if(network != null)
+                    if (network != null)
                     {
                         info.m_maxSlope = network.GetLimit(mode);
                     }
