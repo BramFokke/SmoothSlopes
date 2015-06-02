@@ -25,6 +25,21 @@ namespace SmoothSlopes
                                new NetworkType() {Name = "Ramp", StrictLimit = 0.15f, RelaxedLimit = 0.30f },
                                new NetworkType() {Name = "Highway", StrictLimit = 0.07f, RelaxedLimit = 0.14f },
                                new NetworkType() {Name = "Train Track", StrictLimit = 0.05f, RelaxedLimit = 0.10f },
+							   new NetworkType() {Name = "Gravel Road"},
+							   new NetworkType() {Name = "Water Pipe"},
+							   new NetworkType() {Name = "Pedestrian Path"},
+							   new NetworkType() {Name = "Pedestrian Bridge"},
+							   new NetworkType() {Name = "Public Transport"},
+							   new NetworkType() {Name = "Metro Track"},
+							   new NetworkType() {Name = "Airplane Runway"},
+							   new NetworkType() {Name = "Airplane Path"},
+							   new NetworkType() {Name = "Ship Dock"},
+							   new NetworkType() {Name = "Small Road Tunnel"},
+							   new NetworkType() {Name = "Medium Road Tunnel"},
+							   new NetworkType() {Name = "Large Road Tunnel"},
+							   new NetworkType() {Name = "Highway Tunnel"},
+							   new NetworkType() {Name = "Electricity Wire"},
+							   new NetworkType() {Name = "Electricity Dam"},
                            };
             HoldKey = KeyCode.LeftShift;
             ToggleKey = KeyCode.None;
@@ -55,6 +70,21 @@ namespace SmoothSlopes
             }
             return SlopeMode.Relaxed;
         }
+
+		/// <summary>
+		/// Makes sure there are entries for all supported network types
+		/// </summary>
+	    public void UpdateNetworkTypes()
+	    {
+		    var standard = new Config();
+		    foreach (var network in standard.Networks)
+		    {
+			    if (Networks.All(n => n.Name != network.Name))
+			    {
+				    Networks.Add(network);
+			    }
+		    }
+	    }
 
 
         /// <summary>
@@ -88,7 +118,7 @@ namespace SmoothSlopes
             }
         }
 
-        private void Serialize(string path)
+        public void Serialize(string path)
         {
             using(var stream = new StreamWriter(path))
             {

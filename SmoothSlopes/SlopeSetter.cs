@@ -15,6 +15,9 @@ namespace SmoothSlopes
         public SlopeSetter()
         {
             config = Config.Deserialize(ConfigPath);
+			config.UpdateNetworkTypes();
+	        config.Serialize(ConfigPath);
+
             mode = config.DefaultMode;
             Apply();
         }
@@ -72,21 +75,25 @@ namespace SmoothSlopes
         /// </summary>
         public void Apply()
         {
-            foreach (var collection in
-                        UnityEngine
-                        .Object
-                        .FindObjectsOfType<NetCollection>())
-            {
-                foreach (var info in collection.m_prefabs)
-                {
-                    var type = GetType(info);
-                    var network = config.GetNetwork(type);
-                    if (network != null)
-                    {
-                        info.m_maxSlope = network.GetLimit(mode);
-                    }
-                }
-            }
+			var logged = new HashSet<string>();
+	        for (uint c = 0; c < PrefabCollection<NetInfo>.PrefabCount(); c++)
+	        {
+		        var info = PrefabCollection<NetInfo>.GetPrefab(c);
+				var type = GetType(info);
+				var network = config.GetNetwork(type);
+				if (network != null)
+				{
+					info.m_maxSlope = network.GetLimit(mode);
+				}
+				else
+				{
+					if (!logged.Contains(type))
+					{
+						logged.Add(type);
+						DebugOutputPanel.AddMessage(PluginManager.MessageType.Warning, string.Format("Network type [{0}] not found in configuration", type));
+					}
+				}
+	        }
         }
 
         private static string GetType(NetInfo info)
