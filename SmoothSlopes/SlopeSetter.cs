@@ -12,21 +12,15 @@ namespace SmoothSlopes
     public class SlopeSetter : MonoBehaviour
     {
 
-        public SlopeSetter()
-        {
-            config = Config.Deserialize(ConfigPath);
-			config.UpdateNetworkTypes();
-	        config.Serialize(ConfigPath);
 
-            mode = config.DefaultMode;
-            Apply();
-        }
-
-        private readonly Config config;
+        private Config config;
         private SlopeMode mode;
+
+
 
         void Update()
         {
+            CheckInit(); // Defer loading until tick to ensure that all mods have been loaded.
             if(config.HoldKey != KeyCode.None)
             {
                 UpdateHold(config.HoldKey);
@@ -35,6 +29,21 @@ namespace SmoothSlopes
             {
                 UpdateToggle(config.HoldKey);
             }
+
+        }
+
+        private void CheckInit()
+        {
+            if(config == null)
+            {
+                return;
+            }
+            config = Config.Deserialize(ConfigPath);
+            config.UpdateNetworkTypes();
+            config.Serialize(ConfigPath);
+
+            mode = config.DefaultMode;
+            Apply();
 
         }
 
@@ -75,35 +84,45 @@ namespace SmoothSlopes
         /// </summary>
         public void Apply()
         {
-			var logged = new HashSet<string>();
-	        for (uint c = 0; c < PrefabCollection<NetInfo>.PrefabCount(); c++)
-	        {
-		        var info = PrefabCollection<NetInfo>.GetPrefab(c);
-				var type = GetType(info);
-				var network = config.GetNetwork(type);
-				if (network != null)
-				{
-					info.m_maxSlope = network.GetLimit(mode);
-				}
-				else
-				{
-					if (!logged.Contains(type))
-					{
-						logged.Add(type);
-						DebugOutputPanel.AddMessage(PluginManager.MessageType.Warning, string.Format("Network type [{0}] not found in configuration", type));
-					}
-				}
-	        }
+            foreach(var info in EnumeratePrefabs())
+            {
+                var type = GetType(info);
+                var network = config.GetNetwork(type);
+                if (network != null && network.AreLimitsSet)
+                {
+                    info.m_maxSlope = network.GetLimit(mode);
+                }
+            }
+        }
+
+        private IEnumerable<NetInfo> EnumeratePrefabs()
+        {
+            for (uint c = 0; c < PrefabCollection<NetInfo>.PrefabCount(); c++)
+            {
+                yield return PrefabCollection<NetInfo>.GetPrefab(c);
+            }
         }
 
         private static string GetType(NetInfo info)
         {
-            if(info.m_class.name == "Highway")
+            if (info.m_class.name == "Highway")
             {
                 if(info.m_lanes != null && info.m_lanes.Length == 3)
                 {
                     return "Ramp";
                 }
+            }
+            if(info.name.Contains("Bus"))
+            {
+                if (info.m_class.name == "Small Road")
+                {
+                    return "Small Busway";
+                }
+                return string.Format("{0} With Bus Lanes", info.m_class.name);
+            }
+            if(info.m_class.name == "Gravel Road" && info.name.Contains("Zonable"))
+            {
+                return info.name;
             }
             return info.m_class.name;
         }

@@ -55,6 +55,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Prefabs_Vanilla.txt" />
+    <EmbeddedResource Include="Prefabs_TrafficPlusPlus.txt" />
     <Content Include="SmoothSlopesConfig.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
